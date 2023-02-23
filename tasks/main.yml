@@ -1,0 +1,25 @@
+---
+# tasks file for vector-role
+- name: Install Vector
+  become: true
+  ansible.builtin.yum:
+    name: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.x86_64.rpm"
+    disable_gpg_check: true
+    state: present
+- name: Vector config
+  ansible.builtin.template:
+    src: vector.yml
+    dest: /etc/vector/vector.yml
+    mode: "0644"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    validate: vector validate --no-environment --config-yaml %s
+- name: Vector service
+  become: true
+  ansible.builtin.template:
+    src: vector.service.j2
+    dest: /etc/systemd/system/vector.service
+    mode: "0644"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+  notify: Start Vector service
