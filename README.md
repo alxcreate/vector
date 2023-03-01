@@ -23,6 +23,7 @@ License
 -------
 
 MIT
+
 Author Information
 ------------------
 
